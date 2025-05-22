@@ -97,8 +97,7 @@ The application will be available at `http://localhost:5173` (frontend) and `htt
 
 ## Project Structure
 
-```
-taskzen-task-manager/
+tasks-manager-dashboard/
 ├── client/                 # Frontend React application
 │   ├── src/               # Source files
 │   ├── public/            # Static files
