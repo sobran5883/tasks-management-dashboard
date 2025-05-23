@@ -113,8 +113,8 @@ const Login = () => {
                                 }
                             />
 
-                            <span className="text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer">
-                                Don't have an account? <Link to="/register">Register</Link>
+                            <span onClick={() => navigate("/register")} className="text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer">
+                                Don't have an account? Register
                             </span>
 
                             {isLoading ? (
