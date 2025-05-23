@@ -14,11 +14,13 @@ import {
     useTrashTaskMutation,
 } from "../../redux/slices/api/taskApiSlice"
 import { toast } from "sonner"
+import { useSelector } from "react-redux"
 
 const TaskDialog = ({ task }) => {
     const [open, setOpen] = useState(false)
     const [openEdit, setOpenEdit] = useState(false)
     const [openDialog, setOpenDialog] = useState(false)
+    const { user } = useSelector((state) => state.auth)
 
     const navigate = useNavigate()
 
@@ -28,9 +30,7 @@ const TaskDialog = ({ task }) => {
     const duplicateHandler = async () => {
         try {
             const res = await duplicateTask(task._id).unwrap()
-
             toast.success(res?.message)
-
             setTimeout(() => {
                 setOpenDialog(false)
                 window.location.reload()
@@ -51,9 +51,7 @@ const TaskDialog = ({ task }) => {
                 id: task._id,
                 isTrashed: "trash",
             }).unwrap()
-
             toast.success(res?.message)
-
             setTimeout(() => {
                 setOpenDialog(false)
                 window.location.reload()
@@ -64,39 +62,46 @@ const TaskDialog = ({ task }) => {
         }
     }
 
-    const items = [
-        {
-            label: "Open Task",
-            icon: (
-                <AiTwotoneFolderOpen
-                    className="mr-2 h-5 w-5"
-                    aria-hidden="true"
-                />
-            ),
-            onClick: () => navigate(`/task/${task._id}`),
-        },
-        {
-            label: "Edit",
-            icon: <MdOutlineEdit className="mr-2 h-5 w-5" aria-hidden="true" />,
-            onClick: () => setOpenEdit(true),
-        },
-        {
-            label: "Add Sub-Task",
-            icon: <MdAdd className="mr-2 h-5 w-5" aria-hidden="true" />,
-            onClick: () => setOpen(true),
-        },
-        {
-            label: "Duplicate",
-            icon: <HiDuplicate className="mr-2 h-5 w-5" aria-hidden="true" />,
-            onClick: () => duplicateHandler(),
-        },
-    ]
+    const getMenuItems = () => {
+        const baseItems = [
+            {
+                label: "Open Task",
+                icon: <AiTwotoneFolderOpen className="mr-2 h-5 w-5" aria-hidden="true" />,
+                onClick: () => navigate(`/task/${task._id}`),
+            }
+        ]
+
+        if (user?.isAdmin) {
+            return [
+                ...baseItems,
+                {
+                    label: "Edit",
+                    icon: <MdOutlineEdit className="mr-2 h-5 w-5" aria-hidden="true" />,
+                    onClick: () => setOpenEdit(true),
+                },
+                {
+                    label: "Add Sub-Task",
+                    icon: <MdAdd className="mr-2 h-5 w-5" aria-hidden="true" />,
+                    onClick: () => setOpen(true),
+                },
+                {
+                    label: "Duplicate",
+                    icon: <HiDuplicate className="mr-2 h-5 w-5" aria-hidden="true" />,
+                    onClick: () => duplicateHandler(),
+                }
+            ]
+        }
+
+        return baseItems
+    }
+
+    const items = getMenuItems()
 
     return (
         <>
             <div>
                 <Menu as="div" className="relative inline-block text-left">
-                    <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-gray-600 ">
+                    <Menu.Button className="inline-flex w-full justify-center rounded-md px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100">
                         <BsThreeDots />
                     </Menu.Button>
 
@@ -130,26 +135,28 @@ const TaskDialog = ({ task }) => {
                                 ))}
                             </div>
 
-                            <div className="px-1 py-1">
-                                <Menu.Item>
-                                    {({ active }) => (
-                                        <button
-                                            onClick={() => deleteClicks()}
-                                            className={`${
-                                                active
-                                                    ? "bg-blue-500 text-white"
-                                                    : "text-red-900"
-                                            } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                                        >
-                                            <RiDeleteBin6Line
-                                                className="mr-2 h-5 w-5 text-red-400"
-                                                aria-hidden="true"
-                                            />
-                                            Delete
-                                        </button>
-                                    )}
-                                </Menu.Item>
-                            </div>
+                            {user?.isAdmin && (
+                                <div className="px-1 py-1">
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <button
+                                                onClick={() => deleteClicks()}
+                                                className={`${
+                                                    active
+                                                        ? "bg-blue-500 text-white"
+                                                        : "text-red-900"
+                                                } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                                            >
+                                                <RiDeleteBin6Line
+                                                    className="mr-2 h-5 w-5 text-red-400"
+                                                    aria-hidden="true"
+                                                />
+                                                Delete
+                                            </button>
+                                        )}
+                                    </Menu.Item>
+                                </div>
+                            )}
                         </Menu.Items>
                     </Transition>
                 </Menu>

@@ -3,11 +3,16 @@ import mongoose from "mongoose"
 
 export const dbConnection = async () => {
     try {
+        if (!process.env.MONGODB_URI) {
+            throw new Error('MONGODB_URI is not defined in environment variables')
+        }
+        
         await mongoose.connect(process.env.MONGODB_URI)
-
         console.log("DB connection established")
     } catch (error) {
-        console.log("DB Error: " + error)
+        console.error("DB Connection Error:", error.message)
+        // Exit process with failure
+        process.exit(1)
     }
 }
 

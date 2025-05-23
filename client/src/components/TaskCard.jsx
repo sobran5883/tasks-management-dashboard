@@ -41,7 +41,7 @@ const TaskCard = ({ task }) => {
                         </span>
                     </div>
 
-                    {user?.isAdmin && <TaskDialog task={task} />}
+                    <TaskDialog task={task} />
                 </div>
 
                 <>
