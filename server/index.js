@@ -27,6 +27,7 @@ app.use(
         origin: ["https://tasks-management-dashboard-five.vercel.app", "http://localhost:3000", "http://localhost:3001"],
         methods: ["GET", "POST", "DELETE", "PUT"],
         credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization"],
     })
 )
 
